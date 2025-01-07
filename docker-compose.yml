@@ -1,0 +1,23 @@
+version: "3.5"
+
+services:
+  posts_service:
+    build: 
+      context: ./posts-service
+    ports:
+      - "3000:3000"
+    environment:
+      API_URL: https://dummyjson.com/posts
+      BFF_MOBILE_ORIGIN: http://posts_bff_mobile
+
+  posts_bff_mobile:
+    build: 
+      context: ./posts-bff-mobile
+    ports:
+      - "3001:3001"
+    environment:
+      POSTS_SERVICE_URL: http://posts_service:3000/posts
+      USER_API_URL: https://dummyjson.com/users
+      ALLOWED_CLIENTS_ORIGIN: "[\"http://localhost:3333\"]"
+    depends_on:
+      - posts_service
